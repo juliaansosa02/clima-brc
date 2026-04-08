@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clima BRC · Weather Board</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="theme-dark">
+    <div class="app-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Weather Board de montaña</p>
+          <h1>Clima BRC</h1>
+          <p class="hero-text">
+            Compará zonas, detectá ventanas más estables y leé rápido qué punto está más amable para trekking.
+          </p>
+        </div>
+        <div class="hero-status">
+          <div class="status-card">
+            <span class="status-label">Actualización</span>
+            <strong id="last-updated">Cargando…</strong>
+            <small id="cache-note">Sin datos todavía</small>
+          </div>
+          <div class="status-card">
+            <span class="status-label">Fuentes</span>
+            <strong id="source-mode">Resolviendo…</strong>
+            <small id="timezone-label">Argentina</small>
+          </div>
+        </div>
+      </header>
+
+      <section class="overview-strip" id="overview-strip"></section>
+
+      <section class="toolbar">
+        <label class="search-field">
+          <span>Buscar</span>
+          <input id="search-input" type="search" placeholder="Bariloche, Jakob, Tronador, alias…" />
+        </label>
+        <label class="select-field">
+          <span>Fecha</span>
+          <select id="date-select"></select>
+        </label>
+        <label class="toggle">
+          <input id="favorites-only" type="checkbox" />
+          <span>Solo favoritos</span>
+        </label>
+        <button class="refresh-button" id="refresh-button" type="button">Actualizar ahora</button>
+      </section>
+
+      <section class="filters" id="filter-groups"></section>
+
+      <main class="layout">
+        <section class="longrange-panel panel">
+          <div class="panel-head">
+            <div>
+              <p class="panel-kicker">Vista 14 días</p>
+              <h2>Dónde conviene cada día</h2>
+            </div>
+          </div>
+          <div id="longrange-plan" class="longrange-plan"></div>
+          <div id="longrange-grid" class="longrange-grid"></div>
+        </section>
+
+        <section class="plan-panel panel">
+          <div class="panel-head">
+            <div>
+              <p class="panel-kicker">Plan del día</p>
+              <h2>Mejores ventanas orientativas</h2>
+            </div>
+            <button id="rules-button" class="ghost-button" type="button">Ver reglas</button>
+          </div>
+          <div id="plan-list" class="plan-list"></div>
+        </section>
+
+        <section class="board-panel panel">
+          <div class="panel-head">
+            <div>
+              <p class="panel-kicker">Resumen comparativo</p>
+              <h2>Puntos clave</h2>
+            </div>
+            <div id="error-banner" class="error-banner hidden"></div>
+          </div>
+          <div id="cards-grid" class="cards-grid"></div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="detail-dialog" class="detail-dialog">
+      <div id="detail-content"></div>
+      <form method="dialog" class="dialog-actions">
+        <button type="submit" class="refresh-button">Cerrar</button>
+      </form>
+    </dialog>
+
+    <dialog id="rules-dialog" class="detail-dialog rules-dialog">
+      <div id="rules-content"></div>
+      <form method="dialog" class="dialog-actions">
+        <button type="submit" class="refresh-button">Cerrar</button>
+      </form>
+    </dialog>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
