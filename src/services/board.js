@@ -220,10 +220,40 @@ function buildWindows(hourly) {
 
 /**
  * @param {any[]} hourly
+ */
+function buildSnowSignal(hourly) {
+  const coldWetHours = hourly.filter((entry) => {
+    const precip = entry.precipitationMm ?? 0;
+    const temp = entry.temperatureC ?? 99;
+    const freezing = entry.freezingLevelM ?? 9999;
+    return precip >= 0.8 && (temp <= 1.5 || freezing <= 1700);
+  });
+
+  if (!coldWetHours.length) {
+    return {
+      possible: false,
+      level: "none",
+      label: "Sin señal clara",
+      hours: []
+    };
+  }
+
+  const level = coldWetHours.length >= 4 ? "high" : coldWetHours.length >= 2 ? "medium" : "low";
+  return {
+    possible: true,
+    level,
+    label: level === "high" ? "Posible nieve" : level === "medium" ? "Señal de nieve" : "Chance baja de nieve",
+    hours: coldWetHours.map((entry) => entry.time)
+  };
+}
+
+/**
+ * @param {any[]} hourly
  * @param {string} dateKey
  */
 function buildSummary(hourly, dateKey) {
   const day = filterDay(hourly, dateKey);
+  const snowSignal = buildSnowSignal(day);
   const summary = {
     date: dateKey,
     tempMinC: round(min(numericSeries(day, (entry) => entry.temperatureC)), 1),
@@ -241,7 +271,8 @@ function buildSummary(hourly, dateKey) {
       lowAvgPct: round(average(numericSeries(day, (entry) => entry.lowCloudPct)), 0),
       midAvgPct: round(average(numericSeries(day, (entry) => entry.midCloudPct)), 0),
       highAvgPct: round(average(numericSeries(day, (entry) => entry.highCloudPct)), 0)
-    }
+    },
+    snowSignal
   };
 
   const windows = buildWindows(day);
@@ -340,7 +371,11 @@ async function buildPointBoard(point, options) {
   const combinedDay = buildHourlyCombined(
     filterDay(defaultPrimary.hourly, dateKey),
     filterDay(supplementModel.hourly, dateKey)
-  );
+  ).map((entry) => ({
+    ...entry,
+    snowSignal:
+      (entry.precipitationMm ?? 0) >= 0.8 && (((entry.temperatureC ?? 99) <= 1.5) || ((entry.freezingLevelM ?? 9999) <= 1700))
+  }));
   const summary = buildSummary(combinedDay, dateKey);
   const consensus = buildConsensus(openMeteoModelsOk, dateKey);
 
